@@ -4,10 +4,12 @@ const flatpickr = require('flatpickr');
 import flatpickr from 'flatpickr';
 // Дополнительный импорт стилей
 import 'flatpickr/dist/flatpickr.min.css';
+import Notiflix from 'notiflix';
 
 const refs = {
   input: document.querySelector('input'),
   btn: document.querySelector('button'),
+  block: document.querySelector('timer'),
   data: document.querySelectorAll('.value'),
   labels: document.querySelectorAll('.label'),
   days: document.querySelector('span[data-days]'),
@@ -27,18 +29,15 @@ const options = {
   defaultDate: Date.now(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    console.log(selectedDates[0]);
-    console.log(Date.parse(selectedDates[0]));
     if (Date.parse(selectedDates[0]) <= Date.now()) {
-      window.alert('Please choose a date in the future');
+      // window.alert('Please choose a date in the future');
+      Notiflix.Notify.failure('Please choose a date in the future');
       return;
     }
     refs.btn.removeAttribute('disabled');
-    const delta = Date.parse(selectedDates[0]) - Date.now();
-    console.log(delta);
   },
 };
-const fp = flatpickr(refs.input, options); // flatpickr
+const fp = new flatpickr(refs.input, options); // flatpickr
 // Для подсчета значений используй готовую функцию convertMs, где ms - разница
 // между конечной и текущей датой в миллисекундах.
 function convertMs(ms) {
@@ -59,24 +58,34 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
+let timerID = null;
+
 function updateTimer() {
-  setInterval(() => {
-    // const currentTime = options.defaultDate;
-    // console.log(currentTime);
-    // // const targetTime = selectedDates[0];
-    // const delta = targetTime - currentTime;
-    console.log(delta);
-    const { days, hours, minutes, seconds } = convertMs(delta);
-    refs.days.textContent = days;
-    refs.hours.textContent = hours;
-    refs.minutes.textContent = minutes;
-    refs.seconds.textContent = seconds;
+  const delta = Date.parse(fp.selectedDates[0]) - Date.now();
+  console.log(delta);
+  let rest = delta;
+
+  timerID = setInterval(() => {
+    if (rest >= 0) {
+      const { days, hours, minutes, seconds } = convertMs(rest);
+      refs.days.textContent = addLeadingZeros(days, 2);
+      refs.hours.textContent = addLeadingZeros(hours, 2);
+      refs.minutes.textContent = addLeadingZeros(minutes, 2);
+      refs.seconds.textContent = addLeadingZeros(seconds, 2);
+      rest -= 1000;
+    } else {
+      clearInterval(timerID);
+      console.log('Time out!');
+    }
   }, 1000);
 }
 refs.btn.addEventListener('click', () => {
   console.log('Таймер обратного отсчета запущен');
   updateTimer();
 });
-// console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
-// console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
-// console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
+
+// Напиши функцию addLeadingZero(value), которая использует метод метод padStart()
+// и перед отрисовкой интерфейса форматируй значение.
+function addLeadingZeros(num, totalLength) {
+  return String(num).padStart(totalLength, '0');
+}
