@@ -1,7 +1,6 @@
 // Task 1: Напиши скрипт, который после нажатия кнопки «Start», раз в секунду
 // меняет цвет фона < body > на случайное значение используя инлайн стиль.
 // При нажатии на кнопку «Stop», изменение цвета фона должно останавливаться.
-
 const refs = {
   body: document.querySelector('body'),
   start: document.querySelector('button[data-start]'),
