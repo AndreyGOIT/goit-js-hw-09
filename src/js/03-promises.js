@@ -66,7 +66,7 @@ refs.submit.addEventListener('submit', onSubmitForm());
 //   });
 
 function onSubmitForm(evt) {
-  evt.preventDefault();
+  // evt.preventDefault();
   let delay = Number(evt.target.delay.value);
   let amount = Number(evt.target.amount.value);
   let step = Number(evt.target.step.value);
