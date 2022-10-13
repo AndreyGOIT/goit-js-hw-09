@@ -5,32 +5,46 @@ import Notiflix from 'notiflix';
 // При каждом вызове передай ей номер создаваемого промиса(position) и
 // задержку учитывая введенную пользователем первую задержку(delay) и шаг(step).
 const refs = {
-  inputs: document.querySelectorAll('input'),
+  firstDelay: document.querySelector('input[name="delay"]'),
+  delayStep: document.querySelector('input[name="step"]'),
+  amount: document.querySelector('input[name="amount"]'),
   submit: document.querySelector('button'),
 };
 
-const firstDelay = refs.inputs[0].value;
-const delayStep = refs.inputs[1].value;
-const amount = refs.inputs[2].value;
+const firstDelay = refs.firstDelay.value;
+const delayStep = refs.delayStep.value;
+const amount = refs.amount.value;
 let delay = firstDelay;
 
-refs.submit.addEventListener('submit', onSubmitForm(amount));
-
-function onSubmitForm(amount) {
+const onSubmitForm = () => {
   for (let i = 1; i <= amount; i += 1) {
     let position = i;
-    createPromise(position, delay);
+    createPromise();
+    createPromise(2, 1500)
+      .then(({ position, delay }) => {
+        console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
+      })
+      .catch(({ position, delay }) => {
+        console.log(`❌ Rejected promise ${position} in ${delay}ms`);
+      });
     delay += delayStep;
   }
-}
+};
+refs.submit.addEventListener('submit', onSubmitForm);
 
 function createPromise(position, delay) {
   const shouldResolve = Math.random() > 0.3;
-  if (shouldResolve) {
-    Notiflix.Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
-  } else {
-    Notiflix.Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
-  }
+
+  const promise = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (shouldResolve) {
+        resolve('Success! Value passed to resolve function');
+      } else {
+        reject('Error! Error passed to reject function');
+      }
+    }, 2000);
+  });
+  return promise;
 }
 // refs.inputs[0].addEventListener('input', throttle(onTextInput, 500));
 // refs.inputs[1].addEventListener('input', throttle(onTextInput, 500));
