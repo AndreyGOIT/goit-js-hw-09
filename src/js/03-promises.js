@@ -16,7 +16,8 @@ const delayStep = refs.delayStep.value;
 const amount = refs.amount.value;
 let delay = firstDelay;
 
-const onSubmitForm = () => {
+const onSubmitForm = event => {
+  event.preventDefault();
   for (let i = 1; i <= amount; i += 1) {
     let position = i;
 
@@ -38,13 +39,9 @@ function createPromise(position, delay) {
   const promise = new Promise((resolve, reject) => {
     setTimeout(() => {
       if (shouldResolve) {
-        {
-          position, delay;
-        }
+        resolve({ position, delay });
       } else {
-        {
-          position, delay;
-        }
+        reject({ position, delay });
       }
     }, delay);
   });
