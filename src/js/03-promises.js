@@ -1,4 +1,5 @@
-import Notiflix from 'notiflix';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+
 // import throttle from 'lodash.throttle';
 // Напиши скрипт, который при сабмите формы вызывает функцию
 // createPromise(position, delay) столько раз, сколько ввели в поле amount.
@@ -8,27 +9,26 @@ const refs = {
   firstDelay: document.querySelector('input[name="delay"]'),
   delayStep: document.querySelector('input[name="step"]'),
   amount: document.querySelector('input[name="amount"]'),
-  submit: document.querySelector('button'),
+  submit: document.querySelector('.form'),
 };
-
-const firstDelay = refs.firstDelay.value;
-const delayStep = refs.delayStep.value;
-const amount = refs.amount.value;
-let delay = firstDelay;
 
 const onSubmitForm = event => {
   event.preventDefault();
-  for (let i = 1; i <= amount; i += 1) {
-    let position = i;
+  const firstDelay = refs.firstDelay.value;
+  const delayStep = refs.delayStep.value;
+  const amount = refs.amount.value;
+  let delay = +firstDelay;
 
+  for (let position = 1; position <= +amount; position += 1) {
+    // let position = i;
     createPromise(position, delay)
       .then(({ position, delay }) => {
-        console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
+        Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
       })
       .catch(({ position, delay }) => {
-        console.log(`❌ Rejected promise ${position} in ${delay}ms`);
+        Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
       });
-    delay += delayStep;
+    delay += +delayStep;
   }
 };
 refs.submit.addEventListener('submit', onSubmitForm);
