@@ -20,7 +20,6 @@ const onSubmitForm = event => {
   let delay = +firstDelay;
 
   for (let position = 1; position <= +amount; position += 1) {
-    // let position = i;
     createPromise(position, delay)
       .then(({ position, delay }) => {
         Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
@@ -30,6 +29,9 @@ const onSubmitForm = event => {
       });
     delay += +delayStep;
   }
+  refs.firstDelay.value = '';
+  refs.delayStep.value = '';
+  refs.amount.value = '';
 };
 refs.submit.addEventListener('submit', onSubmitForm);
 
